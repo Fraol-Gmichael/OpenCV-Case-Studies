@@ -6,7 +6,6 @@ import argparse
 import cv2
 import numpy as np
 
-
 ap  = argparse.ArgumentParser()
 ap.add_argument('-v', '--video', help='video path')
 
@@ -26,10 +25,8 @@ while True:
         break
     
     frameCopy = frame.copy()
-    blue = cv2.inRange(frame, blueLower, blueUpper)
-    frameCopy = cv2.bitwise_and(frameCopy, frameCopy, mask=blue)
-    frameCopy = imutils.trackCountour(frameCopy)
- 
+
+    frameCopy = imutils.colorTrack(frameCopy, [100, 67, 0], [255, 128, 50])
     cv2.imshow("Face", frameCopy)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):

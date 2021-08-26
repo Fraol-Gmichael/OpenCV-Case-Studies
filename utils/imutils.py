@@ -225,21 +225,28 @@ def otsu(image):
 
 
 def counter(image):
+    image_drawn = image.copy()
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
     blurred = cv2.GaussianBlur(gray, (11, 11), 0)
 
     edged = cv2.Canny(blurred, 30, 150)
-    countors, _ = cv2.findContours(
+    countours, _ = cv2.findContours(
         edged.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-    #cv2.drawContours(image, countors, -1, (0, 255, 0), 2)
+    cv2.drawContours(image_drawn, countours, -1, (0, 255, 0), 2)
 
-    return countors, image
+    return countours, image_drawn
 
 
-def trackCountour(image):
-    countours, image = counter(image)
+def colorTrack(image, lower, upper):
+    lower = np.array(lower, dtype="uint8")
+    upper = np.array(upper, dtype="uint8")
+
+    mask = cv2.inRange(image, lower, upper)
+    colored = cv2.bitwise_and(image, image, mask=mask)
+
+    countours, _ = counter(colored)    
 
     if len(countours) > 0:
         cnt = sorted(countours, key = cv2.contourArea, reverse=True)[0]
